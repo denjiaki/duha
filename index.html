@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birthday</title>
+  <style>
+    @font-face {
+      font-family: "Didot";
+      src: url("fonts/GFSDidot-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background-color: #fff9e6;
+      font-family: "Didot", "Didot LT STD", "Linotype Didot", Georgia, "Times New Roman", serif;
+      color: #1a1a1a;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 1.5rem;
+    }
+
+    main>p:first-of-type {
+      margin: 0;
+      font-size: clamp(1.25rem, 4vw, 2rem);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .liquid-demo {
+      width: min(100%, 360px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .liquid-demo__stage {
+      width: 100%;
+      padding: 2rem 1.25rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(26, 26, 26, 0.08);
+      background-color: #f5edd8;
+      background-image:
+        linear-gradient(to right, rgba(26, 26, 26, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(26, 26, 26, 0.06) 1px, transparent 1px),
+        radial-gradient(120% 100% at 10% 0%, #fffefb, #f0e8d4);
+      background-size: 20px 20px, 20px 20px, 100% 100%;
+      background-position: 10px 10px, 10px 10px, 0 0;
+    }
+
+    .liquid-demo__slider {
+      position: relative;
+      width: 100%;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .liquid-track {
+      position: relative;
+      width: 100%;
+      height: 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .liquid-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: calc(var(--liquid-p, 30) * 1%);
+      max-width: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg,
+          rgba(188, 120, 138, 0.45),
+          rgba(160, 95, 120, 0.55));
+      pointer-events: none;
+      transition: width 0.08s ease-out;
+    }
+
+    /* Glass layers: fill, radius, shadows, and backdrop come from GlassIsland */
+    .liquid-track-glass {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .liquid-thumb-glass {
+      --thumb-w: 3.25rem;
+      position: absolute;
+      top: 50%;
+      left: calc((var(--liquid-p, 30) / 100) * (100% - var(--thumb-w)));
+      width: var(--thumb-w);
+      height: 2rem;
+      margin-top: -1rem;
+      pointer-events: none;
+      transition: left 0.08s ease-out;
+    }
+
+    .liquid-range {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .liquid-hint {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(26, 26, 26, 0.45);
+      text-align: center;
+    }
+
+    footer {
+      padding: 1rem 1.5rem 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <p>Hello darling</p>
+
+    <div class="liquid-demo">
+      <div class="liquid-demo__stage">
+        <div class="liquid-demo__slider" style="--liquid-p: 30">
+          <div class="liquid-track">
+            <div class="liquid-fill"></div>
+            <div class="liquid-track-glass" id="liquidTrackGlass"></div>
+          </div>
+          <div class="liquid-thumb-glass" id="liquidThumbGlass"></div>
+          <input id="liquidRange" class="liquid-range" type="range" min="0" max="100" value="30"
+            aria-label="Liquid glass level" />
+        </div>
+      </div>
+      <p class="liquid-hint" id="liquidHint">I love you this much!</p>
+    </div>
+  </main>
+  <footer>2026 - 19th, with love to beyond</footer>
+
+  <script src="glass-island.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var trackEl = document.getElementById("liquidTrackGlass");
+      var thumbEl = document.getElementById("liquidThumbGlass");
+      var range = document.getElementById("liquidRange");
+      var sliderRoot = document.querySelector(".liquid-demo__slider");
+      var hint = document.getElementById("liquidHint");
+
+      var trackGlass = new GlassIsland({
+        element: trackEl,
+        borderRadius: "0.5rem",
+        fill: "rgba(255, 255, 255, 0.14)",
+        thickness: 14,
+        refractionStrength: 22,
+        displacementScale: 10,
+        backdropBlur: 1,
+        backdropSaturate: 160,
+        profile: "convexCircle",
+        boxShadow:
+          "inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(26, 26, 26, 0.06), 0 1px 3px rgba(26, 26, 26, 0.06)",
+      });
+
+      var thumbGlass = new GlassIsland({
+        element: thumbEl,
+        borderRadius: "1rem",
+        fill: "rgba(255, 255, 255, 0.22)",
+        thickness: 12,
+        refractionStrength: 26,
+        displacementScale: 14,
+        backdropBlur: 1,
+        backdropSaturate: 170,
+        profile: "convexCircle",
+        boxShadow:
+          "inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -1px 0 rgba(26, 26, 26, 0.05), 0 2px 12px rgba(26, 26, 26, 0.12)",
+      });
+
+      range.addEventListener("input", function () {
+        sliderRoot.style.setProperty("--liquid-p", range.value);
+      });
+
+      hint.textContent = GlassIsland.supportsRefractingBackdrop
+        ? "I love you lots."
+        : "You need google chrome to see this!";
+    });
+  </script>
+</body>
+
+</html>
